@@ -77,10 +77,10 @@ const Item = ({ item }) => {
 
 const Search = ({ search, onSearch }) => {
   return (
-    <div>
+    <>
       <label htmlFor="search">Search: </label>
       <input type="text" id="search" value={search} onChange={onSearch} />
-    </div>
+    </>
   );
 }
 
