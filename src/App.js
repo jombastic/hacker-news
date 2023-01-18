@@ -43,7 +43,7 @@ const App = () => {
     <div>
       <h1>My Hacker Stories</h1>
 
-      <InputWithLabel id="search" label="Search" value={searchTerm} onInputChange={handleSearch}>
+      <InputWithLabel id="search" label="Search" value={searchTerm} onInputChange={handleSearch} isFocused>
         <strong>Search:</strong>
       </InputWithLabel>
 
@@ -77,12 +77,24 @@ const Item = ({ item }) => {
   );
 }
 
-const InputWithLabel = ({ id, children, value, type="text", onInputChange }) => {
+const InputWithLabel = ({ id, children, value, type="text", onInputChange, isFocused }) => {
+  // A
+  const inputRef = React.useRef();
+
+  // C
+  React.useEffect(() => {
+    if (isFocused && inputRef.current) {
+      // D
+      inputRef.current.focus();
+    }
+  }, [isFocused]);
+
   return (
     <>
       <label htmlFor={id}>{children}</label>
       &nbsp;
-      <input type={type} id={id} value={value} onChange={onInputChange} />
+      {/* B */}
+      <input type={type} id={id} value={value} onChange={onInputChange} ref={inputRef} />
     </>
   );
 }
