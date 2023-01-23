@@ -1,29 +1,6 @@
 import './App.css';
 import React from 'react';
 
-const useSemiPersistentState = (key, initialState) => {
-  const [value, setValue] = React.useState(localStorage.getItem(key) || initialState);
-
-  React.useEffect(() => {
-    localStorage.setItem(key, value);
-  }, [key, value]);
-
-  return [value, setValue];
-};
-
-const setStories = 'SET_STORIES';
-const removeStory = 'REMOVE_STORY';
-const storiesReducer = (state, action) => {
-  switch (action.type) {
-    case setStories:
-      return action.payload;
-    case removeStory:
-      return state.filter((story) => action.payload.objectID !== story.objectID);
-    default:
-      throw new Error();
-  }
-}
-
 const initialStories = [
   {
     title: 'React',
@@ -43,33 +20,83 @@ const initialStories = [
   },
 ];
 
-const getAsyncStories = () => new Promise((resolve) => {
+const useSemiPersistentState = (key, initialState) => {
+  const [value, setValue] = React.useState(localStorage.getItem(key) || initialState);
+
+  React.useEffect(() => {
+    localStorage.setItem(key, value);
+  }, [key, value]);
+
+  return [value, setValue];
+};
+
+const fetchInit = 'STORIES_FETCH_INIT';
+const fetchSucess = 'STORIES_FETCH_SUCCESS';
+const fetchError = 'STORIEST_FETCH_FAILURE';
+const removeStory = 'REMOVE_STORY';
+const storiesReducer = (state, action) => {
+  switch (action.type) {
+    case fetchInit:
+      return {
+        ...state,
+        isLoading: true,
+        isError: false
+      };
+    case fetchSucess:
+      return {
+        ...state,
+        isLoading: false,
+        isError: false,
+        data: action.payload
+      };
+    case fetchError:
+      return {
+        ...state,
+        isLoading: false,
+        isError: true
+      }
+    case removeStory:
+      return {
+        ...state,
+        data: state.data.filter((story) => action.payload.objectID !== story.objectID)
+      }
+    default:
+      throw new Error();
+  }
+};
+
+const getAsyncStories = () => new Promise((resolve, reject) => {
+  // setTimeout(reject, 2000);
   setTimeout(() => {
     resolve({ data: { stories: initialStories } });
   }, 2000);
-})
+});
 
 const App = () => {
-  const [stories, dispatchStories] = React.useReducer(storiesReducer, []);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [isError, setIsError] = React.useState(false);
+  // data
+  const [stories, dispatchStories] = React.useReducer(storiesReducer, {data: [], isLoading: false, isError: false});
+  const [searchTerm, setSearchTerm] = useSemiPersistentState('search', 'React');
 
+  // computed
+  const searchedStories = stories.data.filter(story => story.title.toLowerCase().includes(searchTerm.toLowerCase()));
+
+  // mounted
   React.useEffect(() => {
-    setIsLoading(true);
+    dispatchStories({type: fetchInit});
 
     getAsyncStories()
       .then(result => {
         dispatchStories({
-          type: setStories,
+          type: fetchSucess,
           payload: result.data.stories
-        })
-        setIsLoading(false);
+        });
       })
       .catch(() => {
-        setIsError(true);
+        dispatchStories({type: fetchError});
       });
   }, []);
 
+  // methods
   const handleRemoveStory = (item) => {
     dispatchStories({
       type: removeStory,
@@ -77,13 +104,9 @@ const App = () => {
     });
   };
 
-  const [searchTerm, setSearchTerm] = useSemiPersistentState('search', 'React');
-
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
-
-  const searchedStories = stories.filter(story => story.title.toLowerCase().includes(searchTerm.toLowerCase()));
 
   return (
     <div>
@@ -95,9 +118,9 @@ const App = () => {
 
       <hr />
 
-      {isError && <p>Something went wrong...</p>}
+      {stories.isError && <p>Something went wrong...</p>}
 
-      {isLoading ? (
+      {stories.isLoading ? (
         <p>Loading...</p>
       ) : (
         <List list={searchedStories} onRemoveItem={handleRemoveStory} />
