@@ -56,8 +56,8 @@ const App = () => {
 
   // computed
 
-  // mounted | watch
-  React.useEffect(() => {
+  // A
+  const handleFetchStories = React.useCallback(() => { // B
     if (!searchTerm) return;
 
     dispatchStories({type: fetchInit});
@@ -73,7 +73,11 @@ const App = () => {
       .catch(() => {
         dispatchStories({type: fetchError});
       });
-  }, [searchTerm]);
+  }, [searchTerm]); // E
+
+  React.useEffect(() => {
+    handleFetchStories(); // C
+  }, [handleFetchStories]); // D
 
   // methods
   const handleRemoveStory = (item) => {
