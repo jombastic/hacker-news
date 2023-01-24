@@ -1,24 +1,8 @@
 import './App.css';
 import React from 'react';
 
-const initialStories = [
-  {
-    title: 'React',
-    url: 'https://reactjs.org/',
-    author: 'Jordan Walke',
-    num_comments: 3,
-    points: 4,
-    objectID: 0,
-  },
-  {
-    title: 'Redux',
-    url: 'https://redux.js.org/',
-    author: 'Dan Abramov, Andrew Clark',
-    num_comments: 2,
-    points: 5,
-    objectID: 1,
-  },
-];
+// A
+const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
 
 const useSemiPersistentState = (key, initialState) => {
   const [value, setValue] = React.useState(localStorage.getItem(key) || initialState);
@@ -32,7 +16,7 @@ const useSemiPersistentState = (key, initialState) => {
 
 const fetchInit = 'STORIES_FETCH_INIT';
 const fetchSucess = 'STORIES_FETCH_SUCCESS';
-const fetchError = 'STORIEST_FETCH_FAILURE';
+const fetchError = 'STORIES_FETCH_FAILURE';
 const removeStory = 'REMOVE_STORY';
 const storiesReducer = (state, action) => {
   switch (action.type) {
@@ -65,13 +49,6 @@ const storiesReducer = (state, action) => {
   }
 };
 
-const getAsyncStories = () => new Promise((resolve, reject) => {
-  // setTimeout(reject, 2000);
-  setTimeout(() => {
-    resolve({ data: { stories: initialStories } });
-  }, 2000);
-});
-
 const App = () => {
   // data
   const [stories, dispatchStories] = React.useReducer(storiesReducer, {data: [], isLoading: false, isError: false});
@@ -84,11 +61,12 @@ const App = () => {
   React.useEffect(() => {
     dispatchStories({type: fetchInit});
 
-    getAsyncStories()
-      .then(result => {
+    fetch(`${API_ENDPOINT}react`) // B
+      .then((response) => response.json()) // C
+      .then((result) => {
         dispatchStories({
           type: fetchSucess,
-          payload: result.data.stories
+          payload: result.hits // D
         });
       })
       .catch(() => {
