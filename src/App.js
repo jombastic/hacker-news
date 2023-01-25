@@ -154,26 +154,51 @@ const Item = ({ item, onRemoveItem }) => {
   );
 }
 
-const InputWithLabel = ({ id, children, value, type = "text", onInputChange, isFocused }) => {
-  // A
-  const inputRef = React.useRef();
+// const InputWithLabel = ({ id, children, value, type = "text", onInputChange, isFocused }) => {
+//   // A
+//   const inputRef = React.useRef();
 
-  // C
-  React.useEffect(() => {
-    if (isFocused && inputRef.current) {
-      // D
-      inputRef.current.focus();
-    }
-  }, [isFocused]);
+//   // C
+//   React.useEffect(() => {
+//     if (isFocused && inputRef.current) {
+//       // D
+//       inputRef.current.focus();
+//     }
+//   }, [isFocused]);
 
-  return (
-    <>
-      <label htmlFor={id}>{children}</label>
-      &nbsp;
-      {/* B */}
-      <input type={type} id={id} value={value} onChange={onInputChange} ref={inputRef} />
-    </>
-  );
+//   return (
+//     <>
+//       <label htmlFor={id}>{children}</label>
+//       &nbsp;
+//       {/* B */}
+//       <input type={type} id={id} value={value} onChange={onInputChange} ref={inputRef} />
+//     </>
+//   );
+// }
+
+class InputWithLabel extends React.Component {
+  render() {
+    const {
+      id,
+      value,
+      type = 'text',
+      onInputChange,
+      children
+    } = this.props
+    
+    return (
+      <>
+        <label htmlFor="id">{children}</label>
+        &nbsp;
+        <input 
+          id={id}
+          type={type} 
+          value={value}
+          onChange={onInputChange}
+        />
+      </>
+    )
+  }
 }
 
 export default App;
