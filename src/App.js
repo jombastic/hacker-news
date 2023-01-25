@@ -50,6 +50,34 @@ const storiesReducer = (state, action) => {
   }
 };
 
+// state in class components
+// class App extends React.Component {
+//   constructor(props) {
+//     super(props);
+
+//     this.state = {
+//       searchTerm: 'React'
+//     };
+//   }
+
+//   render() {
+//     const { searchTerm } = this.state;
+
+//     return (
+//       <div>
+//         <h1>My Hacker Stories</h1>
+
+//         <SearchForm
+//           searchTerm={searchTerm}
+//           onSearchInput={() => this.setState({
+//             searchTerm: event.target.value
+//           })}
+//         />
+//       </div>
+//     )
+//   }
+// }
+
 const App = () => {
   // data
   const [stories, dispatchStories] = React.useReducer(storiesReducer, { data: [], isLoading: false, isError: false });
@@ -185,14 +213,14 @@ class InputWithLabel extends React.Component {
       onInputChange,
       children
     } = this.props
-    
+
     return (
       <>
         <label htmlFor="id">{children}</label>
         &nbsp;
-        <input 
+        <input
           id={id}
-          type={type} 
+          type={type}
           value={value}
           onChange={onInputChange}
         />
