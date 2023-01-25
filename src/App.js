@@ -58,21 +58,20 @@ const App = () => {
 
   // callbacks
   // A
-  const handleFetchStories = React.useCallback(() => { // B
+  const handleFetchStories = React.useCallback(async () => { // B
     if (!searchTerm) return;
 
     dispatchStories({ type: fetchInit });
 
-    axios.get(url) // B
-      .then((result) => {
-        dispatchStories({
-          type: fetchSucess,
-          payload: result.data.hits // D
-        });
-      })
-      .catch(() => {
-        dispatchStories({ type: fetchError });
+    try {
+      const result = await axios.get(url); // B
+      dispatchStories({
+        type: fetchSucess,
+        payload: result.data.hits // D
       });
+    } catch {
+        dispatchStories({ type: fetchError });
+    }
   }, [url]); // E
 
   // watchers | mounted
