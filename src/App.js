@@ -2,6 +2,8 @@ import './App.css';
 import React from 'react';
 import axios from 'axios';
 
+import './App.css';
+
 // A
 const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
 
@@ -49,34 +51,6 @@ const storiesReducer = (state, action) => {
       throw new Error();
   }
 };
-
-// state in class components
-// class App extends React.Component {
-//   constructor(props) {
-//     super(props);
-
-//     this.state = {
-//       searchTerm: 'React'
-//     };
-//   }
-
-//   render() {
-//     const { searchTerm } = this.state;
-
-//     return (
-//       <div>
-//         <h1>My Hacker Stories</h1>
-
-//         <SearchForm
-//           searchTerm={searchTerm}
-//           onSearchInput={() => this.setState({
-//             searchTerm: event.target.value
-//           })}
-//         />
-//       </div>
-//     )
-//   }
-// }
 
 const App = () => {
   // data
@@ -126,12 +100,10 @@ const App = () => {
   };
 
   return (
-    <div>
-      <h1>My Hacker Stories</h1>
+    <div className='container'>
+      <h1 className='container-primary'>My Hacker Stories</h1>
 
       <SearchForm searchTerm={searchTerm} onSearchInput={handleSearchInput} onSearchSubmit={handleSearchSubmit} />
-
-      <hr />
 
       {stories.isError && <p>Something went wrong...</p>}
 
@@ -146,12 +118,12 @@ const App = () => {
 
 const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => {
   return (
-    <form onSubmit={onSearchSubmit}>
+    <form onSubmit={onSearchSubmit} className="search-form">
       <InputWithLabel id="search" label="Search" value={searchTerm} onInputChange={onSearchInput} isFocused>
         <strong>Search:</strong>
       </InputWithLabel>
 
-      <button type='submit' disabled={!searchTerm}>Submit</button>
+      <button type='submit' disabled={!searchTerm} className="button button_large">Submit</button>
     </form>
   );
 }
@@ -168,65 +140,40 @@ const List = ({ list, onRemoveItem }) => {
 
 const Item = ({ item, onRemoveItem }) => {
   return (
-    <li>
-      <span>
+    <li className='item'>
+      <span style={{ width: '40%' }}>
         <a href={item.url}>{item.title}</a>
       </span>
-      <span>{item.author}</span>
-      <span>{item.num_comments}</span>
-      <span>{item.points}</span>
-      <span>
-        <button type='button' onClick={() => onRemoveItem(item)}>Dismiss</button>
+      <span style={{ width: '30%' }}>{item.author}</span>
+      <span style={{ width: '10%' }}>{item.num_comments}</span>
+      <span style={{ width: '10%' }}>{item.points}</span>
+      <span style={{ width: '10%' }}>
+        <button type='button' className='button button_small' onClick={() => onRemoveItem(item)}>Dismiss</button>
       </span>
     </li>
   );
 }
 
-// const InputWithLabel = ({ id, children, value, type = "text", onInputChange, isFocused }) => {
-//   // A
-//   const inputRef = React.useRef();
+const InputWithLabel = ({ id, children, value, type = "text", onInputChange, isFocused }) => {
+  // A
+  const inputRef = React.useRef();
 
-//   // C
-//   React.useEffect(() => {
-//     if (isFocused && inputRef.current) {
-//       // D
-//       inputRef.current.focus();
-//     }
-//   }, [isFocused]);
+  // C
+  React.useEffect(() => {
+    if (isFocused && inputRef.current) {
+      // D
+      inputRef.current.focus();
+    }
+  }, [isFocused]);
 
-//   return (
-//     <>
-//       <label htmlFor={id}>{children}</label>
-//       &nbsp;
-//       {/* B */}
-//       <input type={type} id={id} value={value} onChange={onInputChange} ref={inputRef} />
-//     </>
-//   );
-// }
-
-class InputWithLabel extends React.Component {
-  render() {
-    const {
-      id,
-      value,
-      type = 'text',
-      onInputChange,
-      children
-    } = this.props
-
-    return (
-      <>
-        <label htmlFor="id">{children}</label>
-        &nbsp;
-        <input
-          id={id}
-          type={type}
-          value={value}
-          onChange={onInputChange}
-        />
-      </>
-    )
-  }
+  return (
+    <>
+      <label htmlFor={id} className="label">{children}</label>
+      &nbsp;
+      {/* B */}
+      <input className='input' type={type} id={id} value={value} onChange={onInputChange} ref={inputRef} />
+    </>
+  );
 }
 
 export default App;
