@@ -1,8 +1,7 @@
-import './App.css';
+import styles from './App.module.css';
+import cs from 'classnames';
 import React from 'react';
 import axios from 'axios';
-
-import './App.css';
 
 // A
 const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
@@ -100,8 +99,8 @@ const App = () => {
   };
 
   return (
-    <div className='container'>
-      <h1 className='container-primary'>My Hacker Stories</h1>
+    <div className={styles.container}>
+      <h1 className={styles.headlinePrimary}>My Hacker Stories</h1>
 
       <SearchForm searchTerm={searchTerm} onSearchInput={handleSearchInput} onSearchSubmit={handleSearchSubmit} />
 
@@ -117,13 +116,16 @@ const App = () => {
 }
 
 const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => {
+  // for the large button
+  const [isLarge, setIsLarge] = React.useState(true);
+
   return (
-    <form onSubmit={onSearchSubmit} className="search-form">
+    <form onSubmit={onSearchSubmit} className={styles.searchForm}>
       <InputWithLabel id="search" label="Search" value={searchTerm} onInputChange={onSearchInput} isFocused>
         <strong>Search:</strong>
       </InputWithLabel>
 
-      <button type='submit' disabled={!searchTerm} className="button button_large">Submit</button>
+      <button type='submit' disabled={!searchTerm} className={cs(styles.button, { [styles.buttonLarge]: isLarge })}>Submit</button>
     </form>
   );
 }
@@ -140,7 +142,7 @@ const List = ({ list, onRemoveItem }) => {
 
 const Item = ({ item, onRemoveItem }) => {
   return (
-    <li className='item'>
+    <li className={styles.item}>
       <span style={{ width: '40%' }}>
         <a href={item.url}>{item.title}</a>
       </span>
@@ -148,7 +150,7 @@ const Item = ({ item, onRemoveItem }) => {
       <span style={{ width: '10%' }}>{item.num_comments}</span>
       <span style={{ width: '10%' }}>{item.points}</span>
       <span style={{ width: '10%' }}>
-        <button type='button' className='button button_small' onClick={() => onRemoveItem(item)}>Dismiss</button>
+        <button type='button' className={cs(styles.button, styles.buttonSmall)} onClick={() => onRemoveItem(item)}>Dismiss</button>
       </span>
     </li>
   );
@@ -168,10 +170,10 @@ const InputWithLabel = ({ id, children, value, type = "text", onInputChange, isF
 
   return (
     <>
-      <label htmlFor={id} className="label">{children}</label>
+      <label htmlFor={id} className={styles.label}>{children}</label>
       &nbsp;
       {/* B */}
-      <input className='input' type={type} id={id} value={value} onChange={onInputChange} ref={inputRef} />
+      <input className={styles.input} type={type} id={id} value={value} onChange={onInputChange} ref={inputRef} />
     </>
   );
 }
