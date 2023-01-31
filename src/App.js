@@ -97,7 +97,6 @@ const useSemiPersistentState = (key, initialState) => {
     if (!isMounted.current) {
       isMounted.current = true;
     } else {
-      console.log('A');
       localStorage.setItem(key, value);
     }
   }, [key, value]);
@@ -140,11 +139,21 @@ const storiesReducer = (state, action) => {
   }
 };
 
+const getSumComments = (stories) => {
+  return stories.data.reduce(
+    (result, value) => result + value.num_comments,
+    0
+  );
+};
+
 const App = () => {
   // data
   const [stories, dispatchStories] = React.useReducer(storiesReducer, { data: [], isLoading: false, isError: false });
   const [searchTerm, setSearchTerm] = useSemiPersistentState('search', 'React');
   const [url, setUrl] = React.useState(`${API_ENDPOINT}${searchTerm}`);
+
+  // computed
+  const sumComments = React.useMemo(() => getSumComments(stories), [stories]); // will run only if stories changes, not on every re-render of the component
 
   // callbacks
   // A
@@ -170,12 +179,12 @@ const App = () => {
   }, [handleFetchStories]); // D
 
   // methods
-  const handleRemoveStory = (item) => {
+  const handleRemoveStory = React.useCallback((item) => {
     dispatchStories({
       type: removeStory,
       payload: item
     });
-  };
+  }, []);
 
   const handleSearchInput = (event) => {
     setSearchTerm(event.target.value);
@@ -189,7 +198,7 @@ const App = () => {
 
   return (
     <StyledContainer>
-      <StyledHeadlinePrimary>My Hacker Stories</StyledHeadlinePrimary>
+      <StyledHeadlinePrimary>My Hacker Stories with {sumComments} comments.</StyledHeadlinePrimary>
 
       <SearchForm searchTerm={searchTerm} onSearchInput={handleSearchInput} onSearchSubmit={handleSearchSubmit} />
 
@@ -216,15 +225,18 @@ const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => {
   );
 }
 
-const List = ({ list, onRemoveItem }) => {
-  return (
-    <ul>
-      {list.map((item) => (
-        <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
-      ))}
-    </ul>
-  );
-}
+const List = React.memo(
+  ({ list, onRemoveItem }) => {
+
+    return (
+      <ul>
+        {list.map((item) => (
+          <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
+        ))}
+      </ul>
+    );
+  }
+);
 
 const Item = ({ item, onRemoveItem }) => {
   return (
