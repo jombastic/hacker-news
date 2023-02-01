@@ -29,7 +29,7 @@ const StyledItem = styled.li`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    width: ${(props) => props.width};
+    width: ${(props: any) => props.width};
 
     a {
       color: inherit;
@@ -85,10 +85,24 @@ const StyledInput = styled.input`
   font-size: 24px;
 `;
 
+type Story = {
+  objectID: string;
+  url: string;
+  title: string;
+  author: string;
+  num_comments: number;
+  points: number;
+};
+
+type Stories = Array<Story>;
+
 // A
 const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
 
-const useSemiPersistentState = (key, initialState) => {
+const useSemiPersistentState = (
+  key: string,
+  initialState: string
+): [string, (newValue: string) => void] => {
   const isMounted = React.useRef(false);
 
   const [value, setValue] = React.useState(localStorage.getItem(key) || initialState);
@@ -104,32 +118,58 @@ const useSemiPersistentState = (key, initialState) => {
   return [value, setValue];
 };
 
-const fetchInit = 'STORIES_FETCH_INIT';
-const fetchSucess = 'STORIES_FETCH_SUCCESS';
-const fetchError = 'STORIES_FETCH_FAILURE';
-const removeStory = 'REMOVE_STORY';
-const storiesReducer = (state, action) => {
+type StoriesState = {
+  data: Stories;
+  isLoading: boolean;
+  isError: boolean;
+};
+
+interface StoriesFetchInitAction {
+  type: 'STORIES_FETCH_INIT';
+}
+
+interface StoriesFetchSuccessAction {
+  type: 'STORIES_FETCH_SUCCESS';
+  payload: Stories;
+}
+
+interface StoriesFetchFailureAction {
+  type: 'STORIES_FETCH_FAILURE';
+}
+
+interface StoriesRemoveAction {
+  type: 'REMOVE_STORY';
+  payload: Story;
+}
+
+type StoriesAction = 
+  | StoriesFetchInitAction
+  | StoriesFetchSuccessAction
+  | StoriesFetchFailureAction
+  | StoriesRemoveAction;
+
+const storiesReducer = (state: StoriesState, action: StoriesAction) => {
   switch (action.type) {
-    case fetchInit:
+    case 'STORIES_FETCH_INIT':
       return {
         ...state,
         isLoading: true,
         isError: false
       };
-    case fetchSucess:
+    case 'STORIES_FETCH_SUCCESS':
       return {
         ...state,
         isLoading: false,
         isError: false,
         data: action.payload
       };
-    case fetchError:
+    case 'STORIES_FETCH_FAILURE':
       return {
         ...state,
         isLoading: false,
         isError: true
       }
-    case removeStory:
+    case 'REMOVE_STORY':
       return {
         ...state,
         data: state.data.filter((story) => action.payload.objectID !== story.objectID)
@@ -139,7 +179,7 @@ const storiesReducer = (state, action) => {
   }
 };
 
-const getSumComments = (stories) => {
+const getSumComments = (stories: StoriesState) => {
   return stories.data.reduce(
     (result, value) => result + value.num_comments,
     0
@@ -160,16 +200,16 @@ const App = () => {
   const handleFetchStories = React.useCallback(async () => { // B
     if (!searchTerm) return;
 
-    dispatchStories({ type: fetchInit });
+    dispatchStories({ type: 'STORIES_FETCH_INIT' });
 
     try {
       const result = await axios.get(url); // B
       dispatchStories({
-        type: fetchSucess,
+        type: 'STORIES_FETCH_SUCCESS',
         payload: result.data.hits // D
       });
     } catch {
-      dispatchStories({ type: fetchError });
+      dispatchStories({ type: 'STORIES_FETCH_FAILURE' });
     }
   }, [url]); // E
 
@@ -179,18 +219,18 @@ const App = () => {
   }, [handleFetchStories]); // D
 
   // methods
-  const handleRemoveStory = React.useCallback((item) => {
+  const handleRemoveStory = React.useCallback((item: Story) => {
     dispatchStories({
-      type: removeStory,
+      type: 'REMOVE_STORY',
       payload: item
     });
   }, []);
 
-  const handleSearchInput = (event) => {
+  const handleSearchInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
 
-  const handleSearchSubmit = (event) => {
+  const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     setUrl(`${API_ENDPOINT}${searchTerm}`);
 
     event.preventDefault();
@@ -213,10 +253,16 @@ const App = () => {
   );
 }
 
-const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => {
+type SearchFormProps = {
+  searchTerm: string;
+  onSearchInput: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onSearchSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+}
+
+const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }: SearchFormProps) => {
   return (
     <StyledSearchForm onSubmit={onSearchSubmit}>
-      <InputWithLabel id="search" label="Search" value={searchTerm} onInputChange={onSearchInput} isFocused>
+      <InputWithLabel id="search" value={searchTerm} onInputChange={onSearchInput} isFocused>
         <strong>Search:</strong>
       </InputWithLabel>
 
@@ -225,8 +271,13 @@ const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => {
   );
 }
 
+type ListProps = {
+  list: Stories;
+  onRemoveItem: (item: Story) => void;
+};
+
 const List = React.memo(
-  ({ list, onRemoveItem }) => {
+  ({ list, onRemoveItem }: ListProps) => {
 
     return (
       <ul>
@@ -238,7 +289,12 @@ const List = React.memo(
   }
 );
 
-const Item = ({ item, onRemoveItem }) => {
+type ItemProps = {
+  item: Story;
+  onRemoveItem: (item: Story) => void;
+};
+
+const Item = ({ item, onRemoveItem }: ItemProps) => {
   return (
     <StyledItem>
       <span style={{ width: '40%' }}>
@@ -256,9 +312,18 @@ const Item = ({ item, onRemoveItem }) => {
   );
 }
 
-const InputWithLabel = ({ id, children, value, type = "text", onInputChange, isFocused }) => {
+type InputWithLabelProps = {
+  id: string;
+  children: React.ReactNode;
+  value: string;
+  type?: string;
+  onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  isFocused?: boolean;
+}
+
+const InputWithLabel = ({ id, children, value, type = "text", onInputChange, isFocused }: InputWithLabelProps) => {
   // A
-  const inputRef = React.useRef();
+  const inputRef = React.useRef<HTMLInputElement>(null!); // null! means read-only because we only execute the focus method on it (read); 
 
   // C
   React.useEffect(() => {
