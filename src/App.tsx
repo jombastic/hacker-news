@@ -142,7 +142,7 @@ interface StoriesRemoveAction {
   payload: Story;
 }
 
-type StoriesAction = 
+type StoriesAction =
   | StoriesFetchInitAction
   | StoriesFetchSuccessAction
   | StoriesFetchFailureAction
@@ -344,3 +344,5 @@ const InputWithLabel = ({ id, children, value, type = "text", onInputChange, isF
 }
 
 export default App;
+
+export { storiesReducer, SearchForm, InputWithLabel, List, Item };
