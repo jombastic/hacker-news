@@ -198,8 +198,6 @@ const App = () => {
   // callbacks
   // A
   const handleFetchStories = React.useCallback(async () => { // B
-    if (!searchTerm) return;
-
     dispatchStories({ type: 'STORIES_FETCH_INIT' });
 
     try {
