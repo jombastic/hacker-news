@@ -3,7 +3,10 @@
 import React from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
-import { ReactComponent as Check } from './check.svg';
+
+import { Story, StoriesState, StoriesAction } from './storiesTypes';
+import { SearchForm } from './SearchForm';
+import { List } from './List';
 
 const StyledContainer = styled.div`
   height: 100vw;
@@ -18,83 +21,6 @@ const StyledHeadlinePrimary = styled.h1`
   font-weight: 300;
   letter-spacing: 2px;
 `;
-
-const StyledItem = styled.li`
-  display: flex;
-  align-items: center;
-  padding-bottom: 5px;
-
-  span {
-    padding: 0 5px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: ${(props: any) => props.width};
-
-    a {
-      color: inherit;
-    }
-  }
-`;
-
-const StyledButton = styled.button`
-  background: transparent;
-  border: 1px solid #171212;
-  padding: 5px;
-  cursor: pointer;
-  transition: all 0.1s ease-in;
-
-  &:hover {
-    background: #171212;
-    color: #ffffff;
-
-    svg {
-      path {
-        fill: #ffffff;
-        stroke: #ffffff;
-      }
-    }
-  }
-`;
-
-const StyledButtonSmall = styled(StyledButton)`
-  padding: 5px;
-`;
-
-const StyledButtonLarge = styled(StyledButton)`
-  padding: 10px;
-`;
-
-const StyledSearchForm = styled.form`
-  padding: 10px 0 20px 0;
-  display: flex;
-  align-items: baseline;
-`;
-
-const StyledLabel = styled.label`
-  border-top: 1px solid #171212;
-  border-left: 1px solid #171212;
-  padding-left: 5px;
-  font-size: 24px;
-`;
-
-const StyledInput = styled.input`
-  border: none;
-  border-bottom: 1px solid #171212;
-  background-color: transparent;
-  font-size: 24px;
-`;
-
-type Story = {
-  objectID: string;
-  url: string;
-  title: string;
-  author: string;
-  num_comments: number;
-  points: number;
-};
-
-type Stories = Array<Story>;
 
 // A
 const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
@@ -117,36 +43,6 @@ const useSemiPersistentState = (
 
   return [value, setValue];
 };
-
-type StoriesState = {
-  data: Stories;
-  isLoading: boolean;
-  isError: boolean;
-};
-
-interface StoriesFetchInitAction {
-  type: 'STORIES_FETCH_INIT';
-}
-
-interface StoriesFetchSuccessAction {
-  type: 'STORIES_FETCH_SUCCESS';
-  payload: Stories;
-}
-
-interface StoriesFetchFailureAction {
-  type: 'STORIES_FETCH_FAILURE';
-}
-
-interface StoriesRemoveAction {
-  type: 'REMOVE_STORY';
-  payload: Story;
-}
-
-type StoriesAction =
-  | StoriesFetchInitAction
-  | StoriesFetchSuccessAction
-  | StoriesFetchFailureAction
-  | StoriesRemoveAction;
 
 const storiesReducer = (state: StoriesState, action: StoriesAction) => {
   switch (action.type) {
@@ -251,96 +147,6 @@ const App = () => {
   );
 }
 
-type SearchFormProps = {
-  searchTerm: string;
-  onSearchInput: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onSearchSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
-}
-
-const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }: SearchFormProps) => {
-  return (
-    <StyledSearchForm onSubmit={onSearchSubmit}>
-      <InputWithLabel id="search" value={searchTerm} onInputChange={onSearchInput} isFocused>
-        <strong>Search:</strong>
-      </InputWithLabel>
-
-      <StyledButtonLarge type='submit' disabled={!searchTerm}>Submit</StyledButtonLarge>
-    </StyledSearchForm>
-  );
-}
-
-type ListProps = {
-  list: Stories;
-  onRemoveItem: (item: Story) => void;
-};
-
-const List = React.memo(
-  ({ list, onRemoveItem }: ListProps) => {
-
-    return (
-      <ul>
-        {list.map((item) => (
-          <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
-        ))}
-      </ul>
-    );
-  }
-);
-
-type ItemProps = {
-  item: Story;
-  onRemoveItem: (item: Story) => void;
-};
-
-const Item = ({ item, onRemoveItem }: ItemProps) => {
-  return (
-    <StyledItem>
-      <span style={{ width: '40%' }}>
-        <a href={item.url}>{item.title}</a>
-      </span>
-      <span style={{ width: '30%' }}>{item.author}</span>
-      <span style={{ width: '10%' }}>{item.num_comments}</span>
-      <span style={{ width: '10%' }}>{item.points}</span>
-      <span style={{ width: '10%' }}>
-        <StyledButtonSmall type='button' onClick={() => onRemoveItem(item)}>
-          <Check height="18px" width="18px" />
-        </StyledButtonSmall>
-      </span>
-    </StyledItem>
-  );
-}
-
-type InputWithLabelProps = {
-  id: string;
-  children: React.ReactNode;
-  value: string;
-  type?: string;
-  onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  isFocused?: boolean;
-}
-
-const InputWithLabel = ({ id, children, value, type = "text", onInputChange, isFocused }: InputWithLabelProps) => {
-  // A
-  const inputRef = React.useRef<HTMLInputElement>(null!); // null! means read-only because we only execute the focus method on it (read); 
-
-  // C
-  React.useEffect(() => {
-    if (isFocused && inputRef.current) {
-      // D
-      inputRef.current.focus();
-    }
-  }, [isFocused]);
-
-  return (
-    <>
-      <StyledLabel htmlFor={id}>{children}</StyledLabel>
-      &nbsp;
-      {/* B */}
-      <StyledInput type={type} id={id} value={value} onChange={onInputChange} ref={inputRef} />
-    </>
-  );
-}
-
 export default App;
 
-export { storiesReducer, SearchForm, InputWithLabel, List, Item };
+export { storiesReducer };
