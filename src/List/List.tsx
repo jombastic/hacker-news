@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Story, Stories } from './storiesTypes';
+import { Story, Stories } from '../storiesTypes';
 
-import { Item } from './Item';
+import { Item } from '../Item/Item';
 
 type ListProps = {
   list: Stories;

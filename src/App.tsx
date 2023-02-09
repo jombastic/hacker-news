@@ -5,8 +5,8 @@ import axios from 'axios';
 import styled from 'styled-components';
 
 import { Story, StoriesState, StoriesAction } from './storiesTypes';
-import { SearchForm } from './SearchForm';
-import { List } from './List';
+import { SearchForm } from './SearchForm/SearchForm';
+import { List } from './List/List';
 
 const StyledContainer = styled.div`
   height: 100vw;
