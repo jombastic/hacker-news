@@ -27,3 +27,21 @@ export const StyledButtonLarge = styled(StyledButton)`
 export const StyledButtonSmall = styled(StyledButton)`
   padding: 5px;
 `;
+
+export const StyledItem = styled.li`
+  display: flex;
+  align-items: center;
+  padding-bottom: 5px;
+
+  span {
+    padding: 0 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: ${(props: any) => props.width};
+
+    a {
+      color: inherit;
+    }
+  }
+`;

@@ -3,25 +3,9 @@ import { Story } from '../storiesTypes';
 
 import styled from 'styled-components';
 import { StyledButtonSmall } from '../styles';
-import { ReactComponent as Check } from '../check.svg';
+import { ReactComponent as Check } from '../shared/svg/check.svg';
 
-const StyledItem = styled.li`
-  display: flex;
-  align-items: center;
-  padding-bottom: 5px;
-
-  span {
-    padding: 0 5px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: ${(props: any) => props.width};
-
-    a {
-      color: inherit;
-    }
-  }
-`;
+import { StyledItem } from '../styles';
 
 type ItemProps = {
     item: Story;
