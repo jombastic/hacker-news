@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Story, Stories } from '../storiesTypes';
 import { sortBy } from 'lodash';
 
-import { Item } from '../Item/Item';
+import { Item } from '../Item';
 import { StyledItem } from '../styles';
 
 import SortButton from './SortButton';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { InputWithLabel } from '../shared/Input/InputWithLabel';
+import { InputWithLabel } from '../shared/Input';
 
 import { StyledButtonLarge } from '../styles';
 

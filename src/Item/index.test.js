@@ -6,7 +6,7 @@ import {
     act,
 } from '@testing-library/react';
 
-import { Item } from './Item';
+import { Item } from '.';
 
 import { storyOne } from '../App.test'; 
 

@@ -5,7 +5,7 @@ import { ReactComponent as CaretDown } from '../shared/svg/caret-down.svg';
 import { ReactComponent as CaretUpFill } from '../shared/svg/caret-up-fill.svg';
 import { ReactComponent as CaretDownFill } from '../shared/svg/caret-down-fill.svg';
 
-import { Sort, SORTS } from './List';
+import { Sort, SORTS } from '.';
 
 interface SortProps {
     title: string;

@@ -7,7 +7,7 @@ import {
   act,
 } from '@testing-library/react';
 
-import { SearchForm } from './SearchForm';
+import { SearchForm } from '.';
 
 describe('SearchForm', () => {
   const searchFormProps = {
