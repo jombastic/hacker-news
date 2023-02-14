@@ -45,3 +45,11 @@ export const StyledItem = styled.li`
     }
   }
 `;
+
+export const CaretHolder = styled.div`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  vertical-align: middle;
+`

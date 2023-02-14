@@ -3,76 +3,69 @@ import { Story, Stories } from '../storiesTypes';
 import { sortBy } from 'lodash';
 
 import { Item } from '../Item/Item';
-import { StyledItem, StyledButtonLarge } from '../styles';
+import { StyledItem } from '../styles';
 
-import { ReactComponent as Caret } from '../shared/svg/caret-up.svg';
-import { ReactComponent as CaretUp } from '../shared/svg/caret-up-fill.svg';
+import SortButton from './SortButton';
+
+const sortOptions = [
+  { title: 'Title', sortType: 'TITLE', idx: 'title', width: '40%' },
+  { title: 'Author', sortType: 'AUTHOR', idx: 'author', width: '30%' },
+  { title: 'Comments', sortType: 'COMMENT', idx: 'num_comments', width: '10%' },
+  { title: 'Points', sortType: 'POINT', idx: 'points', width: '10%' },
+]
+
+export interface SORTS {
+  [key: string]: (list: Stories) => Stories
+}
+
+export const SORTS:SORTS = {
+  NONE: (list) => list,
+};
+
+sortOptions.forEach(option => {
+  SORTS[option.sortType] = (list) => sortBy(list, option.idx)
+});
+
+export interface Sort {
+  sortKey: keyof SORTS,
+  isReverse: boolean
+}
 
 type ListProps = {
   list: Stories;
   onRemoveItem: (item: Story) => void;
 };
 
-const SORTS = {
-  NONE: (list: Stories) => list,
-  TITLE: (list: Stories) => sortBy(list, 'title'),
-  AUTHOR: (list: Stories) => sortBy(list, 'author'),
-  COMMENT: (list: Stories) => sortBy(list, 'num_comments').reverse(),
-  POINT: (list: Stories) => sortBy(list, 'points').reverse(),
-}
-
 const List = React.memo(
   ({ list, onRemoveItem }: ListProps) => {
     // state
-    const [sort, setSort] = React.useState<keyof typeof SORTS>('NONE');
+    const [sort, setSort] = React.useState<Sort>({
+      sortKey: 'NONE',
+      isReverse: false
+    });
 
     // computed
-    const sortedList = SORTS[sort](list);
+    const sortedList = sort.isReverse ? SORTS[sort.sortKey](list).reverse() : SORTS[sort.sortKey](list);
 
     // methods
-    const handleSort = (sortKey: keyof typeof SORTS) => {
-      setSort(sortKey);
+    const handleSort = (sortKey: keyof SORTS) => {
+      const isReverse = sort.sortKey === sortKey && !sort.isReverse;
+      setSort({ sortKey: sortKey, isReverse: isReverse });
     };
 
     return (
       <>
         <div>
-          <span>
-            <StyledButtonLarge type="button" onClick={() => handleSort('TITLE')}>
-              Title
-              &nbsp;
-              {sort === 'TITLE' ? (<CaretUp />) : (<Caret />) }
-            </StyledButtonLarge>
-          </span>
-          <span>
-            <StyledButtonLarge type="button" onClick={() => handleSort('AUTHOR')}>
-              Author
-              &nbsp;
-              {sort === 'AUTHOR' ? (<CaretUp />) : (<Caret />) }
-            </StyledButtonLarge>
-          </span>
-          <span>
-            <StyledButtonLarge type="button" onClick={() => handleSort('COMMENT')}>
-              Comments
-              &nbsp;
-              {sort === 'COMMENT' ? (<CaretUp />) : (<Caret />) }
-            </StyledButtonLarge>
-          </span>
-          <span>
-            <StyledButtonLarge type="button" onClick={() => handleSort('POINT')}>
-              Points
-              &nbsp;
-              {sort === 'POINT' ? (<CaretUp />) : (<Caret />) }
-            </StyledButtonLarge>
-          </span>
+          {sortOptions.map((option) => (
+            <SortButton key={option.title} title={option.title} sortType={option.sortType} sort={sort} handleSort={handleSort} />
+          ))}
         </div>
 
         <ul>
-          <StyledItem style={{ display: 'flex' }}>
-            <span style={{ width: '40%' }}>Title</span>
-            <span style={{ width: '30%' }}>Author</span>
-            <span style={{ width: '10%' }}>Comments</span>
-            <span style={{ width: '10%' }}>Points</span>
+          <StyledItem>
+            {sortOptions.map(option => (
+              <span key={option.title} style={{ width: option.width }}>{option.title}</span>
+            ))}
             <span style={{ width: '10%' }}>Actions</span>
           </StyledItem>
 
