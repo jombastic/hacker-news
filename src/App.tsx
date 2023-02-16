@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import { Story, StoriesState, StoriesAction } from './storiesTypes';
 import { SearchForm } from './SearchForm';
 import { List } from './List';
+import LastSearches from './LastSearches';
 
 const StyledContainer = styled.div`
   height: 100vw;
@@ -82,11 +83,29 @@ const getSumComments = (stories: StoriesState) => {
   );
 };
 
+const getUrl = (searchTerm: string) => `${API_ENDPOINT}${searchTerm}`;
+
+const extractSearchTerm = (url: string) => url.replace(API_ENDPOINT, '');
+const getLastSearches = (urls: string[]) =>
+  urls.reduce((result: string[], url: string, index: number) => {
+    const searchTerm = extractSearchTerm(url);
+
+    if (index === 0)
+      return result.concat(searchTerm);
+
+    const previousSearchTerm = result[result.length - 1];
+
+    if (searchTerm === previousSearchTerm)
+      return result;
+    else
+      return result.concat(searchTerm);
+  }, []).slice(-6, -1);
+
 const App = () => {
   // data
   const [stories, dispatchStories] = React.useReducer(storiesReducer, { data: [], isLoading: false, isError: false });
   const [searchTerm, setSearchTerm] = useSemiPersistentState('search', 'React');
-  const [url, setUrl] = React.useState(`${API_ENDPOINT}${searchTerm}`);
+  const [urls, setUrls] = React.useState([getUrl(searchTerm)]);
 
   // computed
   const sumComments = React.useMemo(() => getSumComments(stories), [stories]); // will run only if stories changes, not on every re-render of the component
@@ -97,7 +116,8 @@ const App = () => {
     dispatchStories({ type: 'STORIES_FETCH_INIT' });
 
     try {
-      const result = await axios.get(url); // B
+      const lastUrl = urls[urls.length - 1];
+      const result = await axios.get(lastUrl); // B
       dispatchStories({
         type: 'STORIES_FETCH_SUCCESS',
         payload: result.data.hits // D
@@ -105,7 +125,7 @@ const App = () => {
     } catch {
       dispatchStories({ type: 'STORIES_FETCH_FAILURE' });
     }
-  }, [url]); // E
+  }, [urls]); // E
 
   // watchers | mounted
   React.useEffect(() => {
@@ -124,17 +144,35 @@ const App = () => {
     setSearchTerm(event.target.value);
   };
 
+  const handleSearch = (searchTerm: string) => {
+    const url = getUrl(searchTerm);
+    setUrls(urls.concat(url));
+  }
+
   const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    setUrl(`${API_ENDPOINT}${searchTerm}`);
+    handleSearch(searchTerm);
 
     event.preventDefault();
   };
+
+  const handleLastSearch = (searchTerm: string) => {
+    setSearchTerm(searchTerm);
+
+    handleSearch(searchTerm);
+  }
+
+  const lastSearches = getLastSearches(urls);
 
   return (
     <StyledContainer>
       <StyledHeadlinePrimary>My Hacker Stories with {sumComments} comments.</StyledHeadlinePrimary>
 
       <SearchForm searchTerm={searchTerm} onSearchInput={handleSearchInput} onSearchSubmit={handleSearchSubmit} />
+
+      <LastSearches
+        lastSearches={lastSearches}
+        onLastSearch={handleLastSearch}
+      />
 
       {stories.isError && <p>Something went wrong...</p>}
 

@@ -44,13 +44,14 @@ const List = React.memo(
       isReverse: false
     });
 
+    const sortFunction = SORTS[sort.sortKey];
     // computed
-    const sortedList = sort.isReverse ? SORTS[sort.sortKey](list).reverse() : SORTS[sort.sortKey](list);
+    const sortedList = sort.isReverse ? sortFunction(list).reverse() : sortFunction(list);
 
     // methods
     const handleSort = (sortKey: keyof SORTS) => {
       const isReverse = sort.sortKey === sortKey && !sort.isReverse;
-      setSort({ sortKey: sortKey, isReverse: isReverse });
+      setSort({ sortKey, isReverse });
     };
 
     return (
