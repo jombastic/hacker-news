@@ -16,16 +16,14 @@ interface SortProps {
 
 const SortButton = ({ title, sortType, sort, handleSort }: SortProps) => {
     return (
-        <span>
-            <StyledButtonLarge type="button" onClick={() => handleSort(sortType)}>
-                {title}
-                &nbsp;
-                <CaretHolder>
-                    {sort.sortKey === sortType && !sort.isReverse ? (<CaretUpFill />) : (<CaretUp />)}
-                    {sort.sortKey === sortType && sort.isReverse ? (<CaretDownFill />) : (<CaretDown />)}
-                </CaretHolder>
-            </StyledButtonLarge>
-        </span>
+        <StyledButtonLarge type="button" onClick={() => handleSort(sortType)}>
+            {title}
+            &nbsp;
+            <CaretHolder>
+                {sort.sortKey === sortType && !sort.isReverse ? (<CaretUpFill />) : (<CaretUp />)}
+                {sort.sortKey === sortType && sort.isReverse ? (<CaretDownFill />) : (<CaretDown />)}
+            </CaretHolder>
+        </StyledButtonLarge>
     );
 }
 

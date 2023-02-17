@@ -1,3 +1,5 @@
+import { StyledButtonLarge } from "../styles";
+
 interface LastSearchesProps {
     lastSearches: string[],
     onLastSearch: (searchTerm: string) => void
@@ -7,13 +9,14 @@ const LastSearches = ({ lastSearches, onLastSearch }: LastSearchesProps) => {
     return (
         <>
             {lastSearches.map((searchTerm, idx) => (
-                <button
+                <StyledButtonLarge
+                    style={{ marginBottom: '10px'}}
                     key={searchTerm + idx}
                     type="button"
                     onClick={() => onLastSearch(searchTerm)}
                 >
                     {searchTerm}
-                </button>
+                </StyledButtonLarge>
             ))}
         </>
     );

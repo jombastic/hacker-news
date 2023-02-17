@@ -18,6 +18,10 @@ export const StyledButton = styled.button`
       }
     }
   }
+
+  & + & {
+    margin-left: 5px;
+  }
 `;
 
 export const StyledButtonLarge = styled(StyledButton)`
