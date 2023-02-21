@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { InputWithLabel } from '../shared/Input';
 
-import { StyledButtonLarge } from '../styles';
+import { StyledButtonLarge } from '../../resources/css/styles';
 
 const StyledSearchForm = styled.form`
   padding: 10px 0 20px 0;

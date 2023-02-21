@@ -4,11 +4,11 @@ import React from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 
-import { Story, StoriesState, StoriesAction } from './storiesTypes';
-import { SearchForm } from './SearchForm';
-import { List } from './List';
-import LastSearches from './LastSearches';
-import { StyledButtonLarge } from './styles';
+import { Story, StoriesState, StoriesAction } from '../../resources/interfaces/storiesTypes';
+import { SearchForm } from '../SearchForm';
+import { List } from '../List';
+import LastSearches from '../LastSearches';
+import { StyledButtonLarge } from '../../resources/css/styles';
 
 const StyledContainer = styled.div`
   height: 100vw;

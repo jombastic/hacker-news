@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { Story } from '../storiesTypes';
+import { Story } from '../../resources/interfaces/storiesTypes';
 
 import styled from 'styled-components';
-import { StyledButtonSmall } from '../styles';
-import { ReactComponent as Check } from '../shared/svg/check.svg';
+import { StyledButtonSmall } from '../../resources/css/styles';
+import { ReactComponent as Check } from '../../resources/svg/check.svg';
 
-import { StyledItem } from '../styles';
+import { StyledItem } from '../../resources/css/styles';
 
 type ItemProps = {
     item: Story;

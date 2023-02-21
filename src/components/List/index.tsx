@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Story, Stories } from '../storiesTypes';
+import { Story, Stories } from '../../resources/interfaces/storiesTypes';
 import { sortBy } from 'lodash';
 
 import { Item } from '../Item';
-import { StyledItem } from '../styles';
+import { StyledItem } from '../../resources/css/styles';
 
 import SortButton from './SortButton';
 

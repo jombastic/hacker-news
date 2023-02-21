@@ -1,9 +1,9 @@
-import { StyledButtonLarge, CaretHolder } from '../styles';
+import { StyledButtonLarge, CaretHolder } from '../../resources/css/styles';
 
-import { ReactComponent as CaretUp } from '../shared/svg/caret-up.svg';
-import { ReactComponent as CaretDown } from '../shared/svg/caret-down.svg';
-import { ReactComponent as CaretUpFill } from '../shared/svg/caret-up-fill.svg';
-import { ReactComponent as CaretDownFill } from '../shared/svg/caret-down-fill.svg';
+import { ReactComponent as CaretUp } from '../../resources/svg/caret-up.svg';
+import { ReactComponent as CaretDown } from '../../resources/svg/caret-down.svg';
+import { ReactComponent as CaretUpFill } from '../../resources/svg/caret-up-fill.svg';
+import { ReactComponent as CaretDownFill } from '../../resources/svg/caret-down-fill.svg';
 
 import { Sort, SORTS } from '.';
 

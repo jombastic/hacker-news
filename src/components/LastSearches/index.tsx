@@ -1,4 +1,4 @@
-import { StyledButtonLarge } from "../styles";
+import { StyledButtonLarge } from "../../resources/css/styles";
 
 interface LastSearchesProps {
     lastSearches: string[],

@@ -8,7 +8,7 @@ import {
 
 import { Item } from '.';
 
-import { storyOne } from '../App.test'; 
+import { storyOne } from '../App/App.test'; 
 
 describe('Item', () => {
     it('renders all properties', () => {
